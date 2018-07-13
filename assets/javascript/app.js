@@ -4,6 +4,7 @@ $(document).ready(function () {
 
     var topics = ["The Office", "Parks and Recreation", "It's Always Sunny in Philadelphia", "Broad City", "Silicon Valley", "Veep", "Rick and Morty"];
     var TVbtn;
+    var playGif = false;
 
     // Your app should take the topics in this array and create buttons in your HTML.
     // Try using a loop that appends a button for each string in the array.
@@ -25,20 +26,14 @@ $(document).ready(function () {
         });
     }
 
-    loadButtons();
-
-    // When the user clicks one of the still GIPHY images, the gif should animate. If the user clicks the gif again, it should stop playing.
-
-    $(document).on("click", ".TVbtn", function () {
-        $(".gifsHere").empty();
-
+    function doTheAjax(dataName) {
         var queryURL = "https://api.giphy.com/v1/gifs/search?";
         var queryParams = { "api_key": "7dVTOMJnC7KCOlYkrUIatFTMPjWY2iv1" };
-        queryParams.q = $(this).data("name");
+        queryParams.q = dataName;
         queryParams.limit = 10;
         queryURL = queryURL + $.param(queryParams);
 
-        $.ajax({
+        return $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function (response) {
@@ -52,14 +47,28 @@ $(document).ready(function () {
                 if (rating != "r") {
                     var TVDiv = $("<div class='tv-gif'>");
                     var img = $("<img/>");
-                    img = img.attr("src", response.data[i].images.fixed_height.url);
+                    img = img.attr("src", response.data[i].images.fixed_height_still.url);
+                    img.attr("data-animate", response.data[i].images.fixed_height.url);
+                    img.attr("data-still", response.data[i].images.fixed_height_still.url);
                     var p = $("<p>").html("Rated " + rating.toUpperCase());
                     TVDiv.append(img, p);
                     $(".gifsHere").append(TVDiv);
                 }
+
             }
 
-        });
+        })
+    }
+
+    loadButtons();
+
+    // When the user clicks one of the still GIPHY images, the gif should animate. If the user clicks the gif again, it should stop playing.
+
+    $(document).on("click", ".TVbtn", function () {
+        $(".gifsHere").empty();
+
+        var dataName = $(this).data("name");
+        doTheAjax(dataName);
     });
 
     // Add a form to your page takes the value from a user input box and adds it into your topics array. Then make a function call that takes each topic in the array remakes the buttons on the page.
@@ -72,13 +81,17 @@ $(document).ready(function () {
         $("input").val("");
     });
 
-    $(document).on("click", "img", function() {
-        console.log($(this)[0].src);
-        var img = $("img");
+    $(document).on("click", "img", function () {
+        var img = $(this);
 
+        if (playGif === false) {
+            img.attr("src", $(this).data("animate"));
+            playGif = true;
+        } else {
+            img.attr("src", $(this).data("still"));
+            playGif = false;
+        }
 
-
-        img.attr("src", data[0].images.fixed_height.url);
     });
 
 });

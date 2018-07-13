@@ -21,6 +21,7 @@ button {
 img {
     height: 200px;
     padding: 10px;
+    cursor: pointer;
 }
 
 p {
