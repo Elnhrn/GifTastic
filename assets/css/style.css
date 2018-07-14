@@ -28,3 +28,8 @@ p {
     text-align: center;
     font-weight: bold;
 }
+
+#loading {
+    display: block;
+    margin: 100px auto 120px;
+}
