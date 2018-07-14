@@ -10,6 +10,7 @@ $(document).ready(function () {
     // Try using a loop that appends a button for each string in the array.
 
     function loadButtons() {
+        $("#buttonsDiv").empty();
         for (var i = 0; i < topics.length; i++) {
             TVbtn = $("<button>");
             TVbtn.addClass("btn TVbtn");
